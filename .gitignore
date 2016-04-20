@@ -1,0 +1,185 @@
+#include <NewPing.h> 
+
+bool isAutomated = false;
+
+const int pinI1 = 10;//left motor cw(forward)
+const int pinI2 = 8;//left motor ccw(backward)
+const int pinI3 = 7;//right motor cw(forward)
+const int pinI4 = 6;//right motor ccw(backward)
+
+const int son1TriggerPin = 14;//set trigger to A0
+const int son1EchoPin = 15;// set echo to A1
+
+const int son2TriggerPin = 16;//set trigger to A2
+const int son2EchoPin = 17;// set echo to A3
+
+const int son3TriggerPin = 18;//set trigger to A4
+const int son3EchoPin = 19;//set echo to A5
+
+int speed = 30;
+int direction = 0;
+int delay_time = 1000;
+int sonarMaxDistance = 200;//set sonar max distance
+
+NewPing sonar1(son1TriggerPin,
+son1EchoPin, sonarMaxDistance);
+NewPing sonar2(son2TriggerPin,
+son2EchoPin, sonarMaxDistance);
+NewPing sonar3(son3TriggerPin,
+son3EchoPin, sonarMaxDistance);
+    
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(pinI1, OUTPUT);
+  pinMode(pinI2, OUTPUT);
+  pinMode(pinI3, OUTPUT);
+  pinMode(pinI4, OUTPUT);
+
+  speed = 100;
+}
+
+void loop(){
+  unsigned int dist;
+
+  if(Serial.available())
+  {
+    char input = Serial.read();
+    Serial.print("Character entered:");
+    Serial.println(input);
+
+    if(input == 'D'){
+      isAutomated=!isAutomated;
+    }
+    else if(!isAutomated){
+      switch(input){
+        case'8':
+        if(runSonar(3) > 4){
+          forward();
+          delay(1000);
+          stopAll();
+        }
+        break;
+       case'2':
+        backward();
+        delay(1000);
+        stopAll();
+        break;
+       case'4':
+        turnLeft();
+        delay(1000);
+        stopAll;
+        break;
+       case'6':
+        turnRight();
+        delay(1000);
+        stopAll();
+        break;
+      }
+    }
+    if(isAutomated){
+      if(runSonar(1) == 3 && runSonar(3) > 3)
+      {
+        forward();
+        delay(1000);
+        stopAll();
+        
+      }
+      if(runSonar(1) > 3)
+      {
+        turnLeft();
+        delay(1000);
+        stopAll();
+      }
+      if(runSonar(1) < 3 || runSonar(3) < 3)
+      {
+        backward();
+        delay(1000);
+        runSonar(3) == 3();
+        turnLeft();
+        delay(1000);
+        stopAll();
+        runSonar(1) == 3();
+      }
+      else if(runSonar(1) > 5 && runSonar(2) > 5 && runSonar(3) > 5){
+        stopAll();
+        delay(1000);
+        stopAll();
+      }
+    }
+  }
+}
+
+unsigned int runSonar(int a)
+{
+  unsigned int tempDist;
+
+  switch(a)
+  {
+    case 1:
+     tempDist = sonar1.ping_cm();//send ping on left sonar and return dist in cm
+     Serial.print("Distance(left):");
+     Serial.print(tempDist);
+     Serial.println("cm");
+
+     break;
+    case 2:
+     tempDist = sonar2.ping_cm();//send ping on right sonar and return dist in cm
+     Serial.print("Distance(right):");
+     Serial.print(tempDist);
+     Serial.println("cm");
+
+     break;
+    case 3:
+     tempDist = sonar3.ping_cm();//send ping on middle sonar and return dist in cm
+     Serial.print("Distance(forward):");
+     Serial.print(tempDist);
+     Serial.println("cm");
+
+     break;
+  }
+  delay(30);
+
+  return tempDist;
+}
+
+void forward()
+{
+  digitalWrite(pinI1, HIGH);
+  digitalWrite(pinI2, LOW);
+  digitalWrite(pinI3, HIGH);
+  digitalWrite(pinI4, LOW);
+}
+
+void backward()
+{
+  digitalWrite(pinI1, LOW);
+  digitalWrite(pinI2, HIGH);
+  digitalWrite(pinI3, LOW);
+  digitalWrite(pinI4, HIGH);
+}
+
+void turnLeft()
+{
+  digitalWrite(pinI1, LOW);
+  digitalWrite(pinI2, HIGH);
+  digitalWrite(pinI3, HIGH);
+  digitalWrite(pinI4, LOW);
+}
+
+void turnRight()
+{
+  digitalWrite(pinI1, HIGH);
+  digitalWrite(pinI2, LOW);
+  digitalWrite(pinI3, LOW);
+  digitalWrite(pinI4, HIGH);
+}
+
+void stopAll()
+{
+  digitalWrite(pinI1, LOW);
+  digitalWrite(pinI2, LOW);
+  digitalWrite(pinI3, LOW);
+  digitalWrite(pinI4, LOW);
+}
+
