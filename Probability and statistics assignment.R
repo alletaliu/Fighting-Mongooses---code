@@ -6,7 +6,7 @@ plot(x = BMI, y = CH1, xlab='BMI', ylab='cholesterol (mg/dL)', main = 'cholester
 #There is a uptrend linear correlation between chelesterol and BMI, although it does not seem to be very strong. 
 CH2 <- 8*BMI-20+rnorm(100,0,100)
 plot(x = BMI, y = CH2, xlab='BMI', ylab='cholesterol2 (mg/dL)', main = 'cholesterol2 against BMI')
-#The dots in this graph seems to be more scattered and the correaltion in this case seems to be much weaker. This could because the variance of cholesterol becomes much larger. 
+#The dots in this graph seems to be more scattered and the correlation in this case seems to be much weaker. This could because the variance of cholesterol becomes much larger. 
 
 #Exercise 2
 #part 1
